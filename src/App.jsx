@@ -5,16 +5,29 @@
 // import DatePicker, { DateObject } from "react-multi-date-picker";
 // import DatePanel from "react-multi-date-picker/plugins/date_panel";
 // import DatePickerHeader from "react-multi-date-picker/plugins/date_picker_header";
+import { useEffect } from "react";
 import { Route, Routes } from "react-router-dom";
 import "./App.css";
+import {
+  onMessageListener,
+  requestForToken,
+} from "./components/utils/firebase/firebase";
 import Cart from "./pages/cart";
 import Dashboard from "./pages/dashboard";
-import Information from './pages/information'
+import Information from "./pages/information";
 function App() {
+  useEffect(() => {
+    navigator.serviceWorker.ready.then(() => {
+      requestForToken();
 
-
-
-
+      onMessageListener()
+        .then((payload) => {
+          console.log({ payload });
+          // setNotification({title: payload?.notification?.title, body: payload?.notification?.body});
+        })
+        .catch((err) => console.log("failed: ", err));
+    });
+  }, []);
 
   // let [value, setValue] = useState(new Date())
   // const date = new DateObject({
@@ -26,8 +39,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Dashboard />} />
         <Route path="/cart" element={<Cart />} />
-        <Route path="/info" element={<Information/>} />
-
+        <Route path="/info" element={<Information />} />
       </Routes>
 
       {/* <DatePicker
